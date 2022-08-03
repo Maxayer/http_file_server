@@ -3,6 +3,7 @@ package http_server;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import http_server.file_storage.FileKeeper;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 
 public class FileHandler implements HttpHandler {
-    private Map<String, String> fileServer = new HashMap<>();
+    private final FileKeeper temporalFileKeeper = FileKeeper.getTemporalFileKeeper();
     private String requestMethod;
     private URI requestUri;
     private Headers requestHeaders;
@@ -35,9 +36,7 @@ public class FileHandler implements HttpHandler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            finally {
-                exchange.close();
-            }
+            exchange.close();
         }
 
         if ("get".equalsIgnoreCase(requestMethod)) {
@@ -47,7 +46,6 @@ public class FileHandler implements HttpHandler {
                 exchange.sendResponseHeaders(200, file.getBytes().length);
                 outputStream = exchange.getResponseBody();
                 outputStream.write(file.getBytes());
-                outputStream.close();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -63,11 +61,11 @@ public class FileHandler implements HttpHandler {
     }
 
     private void saveFile() {
-        fileServer.put(requestUri.toString(), fileBody);
+        temporalFileKeeper.add(requestUri.toString(), fileBody);
     }
 
     private String getSavedFile() {
-        return fileServer.get(requestUri.toString());
+        return temporalFileKeeper.get(requestUri.toString());
     }
 
     private void setRequestParameters(HttpExchange he) {
