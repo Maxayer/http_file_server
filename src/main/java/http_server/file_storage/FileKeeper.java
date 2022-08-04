@@ -12,4 +12,6 @@ public abstract class FileKeeper {
     public abstract String get(String name);
     public abstract boolean add (String name, String file);
     public abstract boolean delete (String name);
+
+    public abstract boolean isFilePresent(String name);
 }

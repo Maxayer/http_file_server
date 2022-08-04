@@ -22,4 +22,9 @@ public class TemporalFileKeeper extends FileKeeper {
         fileServer.remove(name);
         return fileServer.get(name) == null;
     }
+
+    @Override
+    public boolean isFilePresent(String name) {
+        return null != fileServer.get(name);
+    }
 }

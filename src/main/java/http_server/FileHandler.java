@@ -4,13 +4,15 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import http_server.file_storage.FileKeeper;
+import http_server.http_comands.DeleteMethodHandler;
+import http_server.http_comands.GetMethodHandler;
+import http_server.http_comands.HttpMethodHandler;
+import http_server.http_comands.PutMethodHandler;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class FileHandler implements HttpHandler {
@@ -22,46 +24,30 @@ public class FileHandler implements HttpHandler {
     private String fileBody;
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        setRequestParameters(exchange);
+    public void handle(HttpExchange ex) {
+        setRequestParameters(ex);
         setFileFromRequestBody();
+        try {
+            if ("put".equalsIgnoreCase(requestMethod)) {
+                HttpMethodHandler putMethodHandler = new PutMethodHandler();
+                putMethodHandler.handleMethod(ex, requestUri.toString(), fileBody, temporalFileKeeper);
+            }
 
-        if ("put".equalsIgnoreCase(requestMethod)) {
-            saveFile();
-            String response = "";
+            if ("get".equalsIgnoreCase(requestMethod)) {
+                HttpMethodHandler getMethodHandler = new GetMethodHandler();
+                getMethodHandler.handleMethod(ex, requestUri.toString(), fileBody, temporalFileKeeper);
+            }
+            if ("delete".equalsIgnoreCase(requestMethod)) {
+                HttpMethodHandler deleteMethodHandler = new DeleteMethodHandler();
+                deleteMethodHandler.handleMethod(ex, requestUri.toString(), fileBody, temporalFileKeeper);
+            }
+        } finally {
             try {
-                exchange.sendResponseHeaders(200, response.getBytes().length);
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(response.getBytes());
+                ex.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            exchange.close();
         }
-
-        if ("get".equalsIgnoreCase(requestMethod)) {
-            String file = getSavedFile();
-            OutputStream outputStream = null;
-            try {
-                exchange.sendResponseHeaders(200, file.getBytes().length);
-                outputStream = exchange.getResponseBody();
-                outputStream.write(file.getBytes());
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-                exchange.close();
-            }
-        }
-        Helpers.sleep(5);
-    }
-
-    private void saveFile() {
-        temporalFileKeeper.add(requestUri.toString(), fileBody);
     }
 
     private String getSavedFile() {
