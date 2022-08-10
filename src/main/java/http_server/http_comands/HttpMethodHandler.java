@@ -6,17 +6,34 @@ import http_server.file_storage.FileKeeper;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public interface HttpMethodHandler {
-    void handleMethod(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper);
+public abstract class HttpMethodHandler {
+    public HttpExchange ex;
+    public String name;
+    public String fileBody;
+    public FileKeeper fileKeeper;
+    HttpMethodHandler(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper) {
+        this.ex = ex;
+        this.name = name;
+        this.fileBody = fileBody;
+        this.fileKeeper = fileKeeper;
+    }
 
-    default void executeSendResponseHeaders(HttpExchange ex, int code, int length) {
+    HttpMethodHandler(HttpExchange ex, String name, FileKeeper fileKeeper) {
+        this.ex = ex;
+        this.name = name;
+        this.fileBody = "";
+        this.fileKeeper = fileKeeper;
+    }
+    public abstract void handleMethod();
+
+    void executeSendResponseHeaders(HttpExchange ex, int code, int length) {
         try {
             ex.sendResponseHeaders(code, length);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    default void executeWriteToOutputStream(OutputStream outputStream, String response) {
+    void executeWriteToOutputStream(OutputStream outputStream, String response) {
         try {
             outputStream.write(response.getBytes());
         } catch (IOException e) {

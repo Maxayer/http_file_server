@@ -29,17 +29,14 @@ public class FileHandler implements HttpHandler {
         setFileFromRequestBody();
         try {
             if ("put".equalsIgnoreCase(requestMethod)) {
-                HttpMethodHandler putMethodHandler = new PutMethodHandler();
-                putMethodHandler.handleMethod(ex, requestUri.toString(), fileBody, temporalFileKeeper);
+                new PutMethodHandler(ex, requestUri.toString(), fileBody, temporalFileKeeper).handleMethod();
             }
 
             if ("get".equalsIgnoreCase(requestMethod)) {
-                HttpMethodHandler getMethodHandler = new GetMethodHandler();
-                getMethodHandler.handleMethod(ex, requestUri.toString(), fileBody, temporalFileKeeper);
+                new GetMethodHandler(ex, requestUri.toString(), temporalFileKeeper).handleMethod();
             }
             if ("delete".equalsIgnoreCase(requestMethod)) {
-                HttpMethodHandler deleteMethodHandler = new DeleteMethodHandler();
-                deleteMethodHandler.handleMethod(ex, requestUri.toString(), fileBody, temporalFileKeeper);
+                new DeleteMethodHandler(ex, requestUri.toString(), temporalFileKeeper).handleMethod();
             }
         } finally {
             try {
@@ -48,10 +45,6 @@ public class FileHandler implements HttpHandler {
                 e.printStackTrace();
             }
         }
-    }
-
-    private String getSavedFile() {
-        return temporalFileKeeper.get(requestUri.toString());
     }
 
     private void setRequestParameters(HttpExchange he) {

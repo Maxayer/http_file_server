@@ -5,11 +5,18 @@ import http_server.file_storage.FileKeeper;
 
 import java.io.OutputStream;
 
-public class GetMethodHandler implements HttpMethodHandler {
+public class GetMethodHandler extends HttpMethodHandler {
+
+    public GetMethodHandler(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper) {
+        super(ex, name, fileBody, fileKeeper);
+    }
+    public GetMethodHandler(HttpExchange ex, String name, FileKeeper fileKeeper) {
+        super(ex, name, fileKeeper);
+    }
+
 
     @Override
-    public void handleMethod(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper) {
-
+    public void handleMethod() {
         if(fileKeeper.isFilePresent(name)) {
             String file = fileKeeper.get(name);
             executeSendResponseHeaders(ex, 200, file.getBytes().length);
