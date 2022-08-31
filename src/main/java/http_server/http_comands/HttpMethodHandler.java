@@ -1,6 +1,7 @@
 package http_server.http_comands;
 
 import com.sun.net.httpserver.HttpExchange;
+import http_server.Config;
 import http_server.file_storage.FileKeeper;
 
 import java.io.IOException;
@@ -10,19 +11,22 @@ public abstract class HttpMethodHandler {
     public HttpExchange ex;
     public String name;
     public String fileBody;
+    private Config config = Config.getINSTANCE();
     public FileKeeper fileKeeper;
-    HttpMethodHandler(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper) {
+
+
+    HttpMethodHandler(HttpExchange ex, String name, String fileBody) {
         this.ex = ex;
         this.name = name;
         this.fileBody = fileBody;
-        this.fileKeeper = fileKeeper;
+        this.fileKeeper = config.getFileKeeper();
     }
 
-    HttpMethodHandler(HttpExchange ex, String name, FileKeeper fileKeeper) {
+    HttpMethodHandler(HttpExchange ex, String name) {
         this.ex = ex;
         this.name = name;
         this.fileBody = "";
-        this.fileKeeper = fileKeeper;
+        this.fileKeeper = config.getFileKeeper();
     }
     public abstract void handleMethod();
 

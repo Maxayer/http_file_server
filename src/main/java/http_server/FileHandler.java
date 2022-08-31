@@ -3,11 +3,7 @@ package http_server;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import http_server.file_storage.FileKeeper;
-import http_server.http_comands.DeleteMethodHandler;
-import http_server.http_comands.GetMethodHandler;
 import http_server.http_comands.HttpMethodHandler;
-import http_server.http_comands.PutMethodHandler;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -16,28 +12,23 @@ import java.nio.charset.StandardCharsets;
 
 
 public class FileHandler implements HttpHandler {
-    private final FileKeeper temporalFileKeeper = FileKeeper.getTemporalFileKeeper();
     private String requestMethod;
     private URI requestUri;
     private Headers requestHeaders;
     private InputStream requestBody;
     private String fileBody;
+    private Config config = Config.getINSTANCE();
+    CommandFactory commandFactory = config.getCommandFactory();
 
     @Override
     public void handle(HttpExchange ex) {
         setRequestParameters(ex);
         setFileFromRequestBody();
-        try {
-            if ("put".equalsIgnoreCase(requestMethod)) {
-                new PutMethodHandler(ex, requestUri.toString(), fileBody, temporalFileKeeper).handleMethod();
-            }
 
-            if ("get".equalsIgnoreCase(requestMethod)) {
-                new GetMethodHandler(ex, requestUri.toString(), temporalFileKeeper).handleMethod();
-            }
-            if ("delete".equalsIgnoreCase(requestMethod)) {
-                new DeleteMethodHandler(ex, requestUri.toString(), temporalFileKeeper).handleMethod();
-            }
+        try {
+            HttpMethodHandler httpMethodHandler = commandFactory.getHttpMethodHandler(requestMethod, ex, requestUri.toString(), fileBody);
+            httpMethodHandler.handleMethod();
+
         } finally {
             try {
                 ex.close();
@@ -46,7 +37,6 @@ public class FileHandler implements HttpHandler {
             }
         }
     }
-
     private void setRequestParameters(HttpExchange he) {
         requestMethod = he.getRequestMethod();
         requestUri = he.getRequestURI();
@@ -55,7 +45,7 @@ public class FileHandler implements HttpHandler {
     }
 
     private void setFileFromRequestBody() {
-        String fileBody = null;
+        String fileBody = "";
         try {
             fileBody = IOUtils.toString(requestBody, StandardCharsets.UTF_8);
             if (fileBody != null && !"".equals(fileBody)) {

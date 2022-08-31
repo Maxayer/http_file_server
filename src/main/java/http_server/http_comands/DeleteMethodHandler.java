@@ -4,12 +4,12 @@ import com.sun.net.httpserver.HttpExchange;
 import http_server.file_storage.FileKeeper;
 
 public class DeleteMethodHandler extends HttpMethodHandler {
-    public DeleteMethodHandler(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper) {
-        super(ex, name, fileBody, fileKeeper);
+    public DeleteMethodHandler(HttpExchange ex, String name, String fileBody) {
+        super(ex, name, fileBody);
     }
 
-    public DeleteMethodHandler(HttpExchange ex, String name, FileKeeper fileKeeper) {
-        super(ex, name, fileKeeper);
+    public DeleteMethodHandler(HttpExchange ex, String name) {
+        super(ex, name);
     }
 
     @Override

@@ -5,8 +5,8 @@ import http_server.file_storage.FileKeeper;
 import java.io.OutputStream;
 
 public class PutMethodHandler extends HttpMethodHandler {
-    public PutMethodHandler(HttpExchange ex, String name, String fileBody, FileKeeper fileKeeper) {
-        super(ex, name, fileBody, fileKeeper);
+    public PutMethodHandler(HttpExchange ex, String name, String fileBody) {
+        super(ex, name, fileBody);
     }
 
     @Override
