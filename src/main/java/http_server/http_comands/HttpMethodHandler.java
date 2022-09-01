@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public abstract class HttpMethodHandler {
-    public HttpExchange ex;
-    public String name;
-    public String fileBody;
+    HttpExchange ex;
+    String name;
+    String fileBody;
     private Config config = Config.getINSTANCE();
-    public FileKeeper fileKeeper;
+    final FileKeeper fileKeeper;
 
 
     HttpMethodHandler(HttpExchange ex, String name, String fileBody) {

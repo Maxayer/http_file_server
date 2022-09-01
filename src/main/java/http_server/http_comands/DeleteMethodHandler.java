@@ -15,11 +15,14 @@ public class DeleteMethodHandler extends HttpMethodHandler {
     @Override
     public void handleMethod() {
         String response = "";
-        if(fileKeeper.delete(name)) {
-            executeSendResponseHeaders(ex, 200, response.getBytes().length);
+        synchronized (fileKeeper) {
+            if(fileKeeper.delete(name)) {
+                executeSendResponseHeaders(ex, 200, response.getBytes().length);
+            }
+            else {
+                executeSendResponseHeaders(ex, 400, response.getBytes().length);
+            }
         }
-        else {
-            executeSendResponseHeaders(ex, 400, response.getBytes().length);
-        }
+
     }
 }

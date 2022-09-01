@@ -12,7 +12,10 @@ public class PutMethodHandler extends HttpMethodHandler {
     @Override
     public void handleMethod() {
         String response = "";
-        int code = fileKeeper.add(name, fileBody) ? 200 : 400;
+        int code;
+        synchronized (fileKeeper) {
+            code = fileKeeper.add(name, fileBody) ? 200 : 400;
+        }
 
         executeSendResponseHeaders(ex, code, response.getBytes().length);
 

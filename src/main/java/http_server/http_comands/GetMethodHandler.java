@@ -16,14 +16,17 @@ public class GetMethodHandler extends HttpMethodHandler {
 
     @Override
     public void handleMethod() {
-        if(fileKeeper.isFilePresent(name)) {
-            String file = fileKeeper.get(name);
-            executeSendResponseHeaders(ex, 200, file.getBytes().length);
-            OutputStream outputStream = ex.getResponseBody();
-            executeWriteToOutputStream(outputStream, file);
+        synchronized (fileKeeper) {
+            if(fileKeeper.isFilePresent(name)) {
+                String file = fileKeeper.get(name);
+                executeSendResponseHeaders(ex, 200, file.getBytes().length);
+                OutputStream outputStream = ex.getResponseBody();
+                executeWriteToOutputStream(outputStream, file);
+            }
+            else {
+                executeSendResponseHeaders(ex, 404, 0);
+            }
         }
-        else {
-            executeSendResponseHeaders(ex, 404, 0);
-        }
+
     }
 }
