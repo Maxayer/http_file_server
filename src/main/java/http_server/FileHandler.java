@@ -9,6 +9,9 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class FileHandler implements HttpHandler {
@@ -49,15 +52,24 @@ public class FileHandler implements HttpHandler {
         try {
             fileBody = IOUtils.toString(requestBody, StandardCharsets.UTF_8);
             if (fileBody != null && !"".equals(fileBody)) {
-                fileBody = fileBody.split("\n\r")[1]
-                        .replaceAll("-+\\d+-+", "")
+                fileBody = Objects.requireNonNull(extractJsonBody(fileBody))
                         .trim();
                 this.fileBody = fileBody;
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String extractJsonBody(String text) {
+        Pattern pattern = Pattern.compile("\\{.*\\}", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 
 
