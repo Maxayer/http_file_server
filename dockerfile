@@ -1,16 +1,15 @@
-FROM ubuntu
+FROM ubuntu AS builder
 
 RUN apt-get update && \
     apt-get install -y git maven && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /http_server
-WORKDIR /http_server
+WORKDIR /app/http_file_server
+COPY ./* ./
+CMD mvn clean package
 
-RUN git clone https://github.com/Maxayer/http_file_server.git
-
-WORKDIR /http_server/http_file_server
-
-EXPOSE 8082
-CMD mvn clean test
+FROM openjdk:jre-alpine
+WORKDIR /app
+COPY --from=builder /app/http_file_server/target/solid_project-1.0-SNAPSHOT-jar-with-dependencies.jar ./
+CMD java -jar solid_project-1.0-SNAPSHOT-jar-with-dependencies.jar
