@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 WORKDIR /app/http_file_server
 COPY ./* ./
-CMD mvn clean package
+RUN mvn clean package
 
 FROM openjdk:jre-alpine
 WORKDIR /app
