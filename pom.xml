@@ -43,6 +43,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
+                                <addClasspath>true</addClasspath>
                                     <mainClass>
                                         http_server.MainClass
                                     </mainClass>
