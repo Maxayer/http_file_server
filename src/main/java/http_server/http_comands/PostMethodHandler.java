@@ -2,11 +2,11 @@ package http_server.http_comands;
 
 import com.sun.net.httpserver.HttpExchange;
 import http_server.StatusCode;
-import http_server.file_storage.FileKeeper;
+
 import java.io.OutputStream;
 
-public class PutMethodHandler extends HttpMethodHandler {
-    public PutMethodHandler(HttpExchange ex, String name, String fileBody) {
+public class PostMethodHandler extends HttpMethodHandler {
+    public PostMethodHandler(HttpExchange ex, String name, String fileBody) {
         super(ex, name, fileBody);
     }
 
