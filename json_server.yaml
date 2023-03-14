@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: json-server
-        image: maxbova/http_server:1.0.1
+        image: maxbova/http_server:commit_verification
         ports:
         - containerPort: 8082
 ---
