@@ -13,6 +13,6 @@ public class MainClass extends Thread {
         jsonServer.createContext("/", new FileHandler());
         jsonServer.setExecutor(Executors.newCachedThreadPool());
 
-        //jsonServer.start();
+        jsonServer.start();
     }
 }
