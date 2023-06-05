@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: json-server
-        image: maxbova/http_server:commit_verification
+        image: maxbova/http_server:IMAGE_TAG_PLACEHOLDER
         imagePullPolicy: Always
         ports:
         - containerPort: 8082
