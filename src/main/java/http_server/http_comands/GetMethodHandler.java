@@ -20,7 +20,7 @@ public class GetMethodHandler extends HttpMethodHandler {
         synchronized (fileKeeper) {
             if(fileKeeper.isFilePresent(name)) {
                 String file = fileKeeper.get(name);
-                executeSendResponseHeaders(ex, StatusCode._200.getCode(), file.getBytes().length);
+                executeSendResponseHeaders(ex, StatusCode._403.getCode(), file.getBytes().length);
                 OutputStream outputStream = ex.getResponseBody();
                 executeWriteToOutputStream(outputStream, file);
             }
